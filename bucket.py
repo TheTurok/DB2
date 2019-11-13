@@ -4,9 +4,9 @@ class Bucket:
     """Bins to hold coin values.
 
     Attributes:
-        _label (str): Bin's label
-        _weight (int): Bin's weight, coin's total weight
-        _coins (object: coin): The coins inside this bin with index as its key
+        _label (str): Buckets's label
+        _weight (int): Buckets's weight, coin's total weight
+        _coins (object: coin): The coins inside this bucket with index as its key
     """
 
     def __init__(self, label):
@@ -15,25 +15,25 @@ class Bucket:
         self._coins = {}
 
     def __str__(self):
-        list = [v.value for (k, v) in self.coins.items()]
-        return "Bin: " + str(self.label) + " -- Weight: " + str(self.weight) + " -- Coins: " + str(list)
+        values = [v.value for (k, v) in self.coins.items()]
+        return "Bin: " + str(self.label) + " -- Weight: " + str(self.weight) + " -- Coins: " + str(values)
 
     def __len__(self):
         return len(self.coins)
 
     @property
     def label(self):
-        """str: Property of bin's label"""
+        """str: Property of buckets's label"""
         return self._label
 
     @property
     def coins(self):
-        """:dict:'coin': Property of bin's coins"""
+        """:dict:'coin': Property of bucket's coins"""
         return self._coins
 
     @property
     def weight(self):
-        """int: Property of the bin's weight, total amount of coin's weights"""
+        """int: Property of the bucket's weight, total amount of coin's weights"""
         return self._weight
 
     @weight.setter
@@ -41,7 +41,7 @@ class Bucket:
         self._weight = weight
 
     def add_coin(self, coin, index):
-        """Add coin into bin with its index from list as key
+        """Add coin into bucket with its index from list as key
 
         Args:
             coin: the coin object to put into the coins dict
@@ -56,7 +56,7 @@ class Bucket:
             self.coins[index] = coin
 
     def remove_coin(self, index):
-        """Remove coin from the bin with its index from list as key
+        """Remove coin from the bucket with its index from list as key
 
         Args:
             index: the key of coin to remove

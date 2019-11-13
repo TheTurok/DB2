@@ -10,7 +10,7 @@ class DitheringBinning:
 
     Attributes:
         _coin_list (list: coin object): A list to hold values and weights after it has been converted to coins.
-        _bins (list: bin object): A list of bins to distribute the coins into
+        _bins (list: bucket object): A list of bins to distribute the coins into
         _min_value (int): The lowest value of a coin
         _max_value (int): The highest value of a coin
         _total_weight (int): total weight of all coins
@@ -29,13 +29,13 @@ class DitheringBinning:
 
     def __str__(self):
         db_info = ['Labeling:', self.label, '---', "Total Weight: " + str(self.total_weight), '---']
-        for bucket in self.bins:
-            db_info.append(bucket)
+        for buck in self.bins:
+            db_info.append(buck)
         return '\n'.join(map(str, db_info))
 
     @property
     def bins(self):
-        """:obj:'list' of :obj:'bin': Property of DB bin list"""
+        """:obj:'list' of :obj:'bucket': Property of DB bucket list"""
         return self._bins
 
     @property
@@ -128,8 +128,8 @@ class DitheringBinning:
             empty_bin = Bucket(labels[i])
             self.bins.append(empty_bin)
 
-    def _send_bin(self, offset_value, split):
-        """Receive offset_value with split and calculate which bin it belongs too"""
+    def _send_bucket(self, offset_value, split):
+        """Receive offset_value with split and calculate which bucket it belongs too"""
         fit = 0
         while offset_value >= split:
             offset_value -= split
@@ -139,8 +139,8 @@ class DitheringBinning:
     def distribution_by_value(self):
         """Distribute coins into bins according to its value
 
-        We use the range of min and max to create a split number by value per bin. The fit is made by calling _send_bin,
-        which will keep reducing the fit number by split to find the appropriate bin it belongs into
+        We use the range of min and max to create a split number by value per bucket. The fit is made by calling _send_bin,
+        which will keep reducing the fit number by split to find the appropriate bucket it belongs into
 
         Since every index is unique, we will use that as key for coins to store it in bins.
         """
@@ -153,47 +153,48 @@ class DitheringBinning:
                 continue
 
             offset_value = int(coin.value - self.min_value)
-            fit = self._send_bin(offset_value, split)
+            fit = self._send_bucket(offset_value, split)
 
-            if fit >= self.bin_count:  # Edge Case: If fit hits the max value, put in last bin
+            if fit >= self.bin_count:  # Edge Case: If fit hits the max value, put in last bucket
                 self.bins[self.bin_count - 1].add_coin(coin, index)
             else:
                 self.bins[fit].add_coin(coin, index)
 
     def dithering_balance(self):
-        """Balance the weight in each bin by moving coins around after coins are distributed in bins already.
+        """Balance the weight in each bucket by moving coins around after coins are distributed in bins already.
 
         Using Dithering, we distribute min/max value of each bins and move around coins with random weight chosen until
-        the weight in the bin are close to being evenly distributed. -- Start with in-order then reverse for
-        full balance. Each run, we keep pushing to the next bin until its weight is less than the threshold.
+        the weight in the bucket are close to being evenly distributed. -- Start with in-order then reverse for
+        full balance. Each run, we keep pushing to the next bucket until its weight is less than the threshold.
 
         threshold
-            1. Weight / number of bins: the least amount of weight in each bin
-            2. Average weight in each coin: To not over add coins in a bin accounting with average value.
-            3. Threshold >= : threshold is naturally bigger than a split even weight for each bin, so we use = sign to
-            favor more balance/dithering, as it would be a ~5050 anyways for next value to make it go below split weight
+            1. Weight / number of bins: the least amount of weight in each bucket
+            2. Average weight in each coin: To not over add coins in a bucket accounting with average value.
+            3. Threshold >= : threshold is naturally bigger than a split even weight for each bucket, so we use = sign
+            to favor more balance/dithering, as it would be a ~5050 anyways for next value to make it go below split
+            weight
         """
 
         split_weight = int(self.total_weight / self.bin_count)  # All bins weight is evenly split
         average_weight = int(self.total_weight / len(self.coin_list))  # Bins average weight per coin
-        threshold = split_weight + average_weight  # Threshold to move coin to other bin
+        threshold = split_weight + average_weight  # Threshold to move coin to other bucket
 
         # In-Order
         for i in range(0, self.bin_count-1):  # Loop until 2nd to last item
-            bucket = self.bins[i]
-            while bucket.weight >= threshold and bucket.weight != 0:  # Keep adding coins on next bin until it pass threshold
-                max_value = max([v.value for v in bucket.coins.values()])  # Gat max value as going up the bin count
-                filtered_values = {k: coin for (k, coin) in bucket.coins.items() if coin.value >= max_value}  # Edge Values
+            buck = self.bins[i]  # Keep adding coins on next bucket
+            while buck.weight >= threshold and buck.weight != 0:   # until it passes threshold
+                max_value = max([v.value for v in buck.coins.values()])  # Gat max value as going up the bin count
+                filtered_values = {k: coin for (k, coin) in buck.coins.items() if coin.value >= max_value}  # Edge #'s
                 coin_index = random.choice(list(filtered_values))  # Dithering Random weight of that value
-                self.bins[i+1].add_coin(bucket.remove_coin(coin_index), coin_index)  # add removed coin
+                self.bins[i+1].add_coin(buck.remove_coin(coin_index), coin_index)  # add removed coin
 
         for i in range(self.bin_count-1, 0, -1):  # Reverse
-            bucket = self.bins[i]
-            while bucket.weight >= threshold and bucket.weight != 0:
-                min_value = min([v.value for v in bucket.coins.values()])  # Min values going down the bin count
-                filtered_values = {k: coin for (k, coin) in bucket.coins.items() if coin.value <= min_value}
+            buck = self.bins[i]
+            while buck.weight >= threshold and buck.weight != 0:
+                min_value = min([v.value for v in buck.coins.values()])  # Min values going down the bucket count
+                filtered_values = {k: coin for (k, coin) in buck.coins.items() if coin.value <= min_value}
                 coin_index = random.choice(list(filtered_values))
-                self.bins[i-1].add_coin(bucket.remove_coin(coin_index), coin_index)
+                self.bins[i-1].add_coin(buck.remove_coin(coin_index), coin_index)
 
     def labeling(self):
         """Labeling the coins in the bins
@@ -202,9 +203,9 @@ class DitheringBinning:
             The label Output
         """
 
-        for bucket in self.bins:
-            for k, v in bucket.coins.items():
-                self.label[k] = bucket.label  # coin key respective to value index
+        for buck in self.bins:
+            for k, v in buck.coins.items():
+                self.label[k] = buck.label  # coin key respective to value index
 
         return self.label
 
@@ -255,10 +256,10 @@ if __name__ == "__main__":
     print()
 
     # Accuracy Testing
-    for bucket in db.bins:
+    for buck in db.bins:
         split_weight = int(db.total_weight / db.bin_count)
-        percent_off = (bucket.weight - split_weight) / db.total_weight
-        print(str(bucket.label) + " is " + "{0:.2%}".format(abs(percent_off)) + " off from perfect distribution:")
+        percent_off = (buck.weight - split_weight) / db.total_weight
+        print(str(buck.label) + " is " + "{0:.2%}".format(abs(percent_off)) + " off from perfect distribution:")
 
     print()
     print('Dithering Binning Object')
