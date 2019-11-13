@@ -121,13 +121,12 @@ class TestDitheringBinning(unittest.TestCase):
         self.weights = [1] * len(self.x)
         self.db_object.binning(self.x, self.weights, self.labels, self.label_length)
 
-        for k, coin in self.db_object.bins[0].coins.items():
-            if coin.value == 10:  # No values should be 10
-                self.assertTrue(False)
-        for k, coin in self.db_object.bins[1].coins.items():
+        for coin in self.db_object.bins[0].coins.values():
+            self.assertNotEqual(10, coin.value)  # No values should be 10
+        for coin in self.db_object.bins[1].coins.vlaues():
             if coin.value < 9:  # Values should only be 9 or 10
                 self.assertTrue(False)
-        for k, coin in self.db_object.bins[2].coins.items():
+        for coin in self.db_object.bins[2].coins.values():
             if coin.value != 10:  # Values can only be 10
                 self.assertTrue(False)
 
@@ -154,15 +153,12 @@ class TestDitheringBinning(unittest.TestCase):
         self.x = [1.1, 1.1, 1.1, 1.1, 1.1, 2.2, 2.2, 2.2, 2.2, 2.2, 3.3, 3.3, 3.3, 3.3, 3.3]
         self.weights = [0] * len(self.x)
         self.db_object.binning(self.x, self.weights, self.labels, self.label_length)
-        for k, coin in self.db_object.bins[0].coins.items():
-            if coin.value != 1.1:
-                self.assertTrue(False)
-        for k, coin in self.db_object.bins[1].coins.items():
-            if coin.value != 2.2:
-                self.assertTrue(False)
-        for k, coin in self.db_object.bins[2].coins.items():
-            if coin.value != 3.3:
-                self.assertTrue(False)
+        for coin in self.db_object.bins[0].coins.values():
+            self.assertEqual(coin.value, 1.1)
+        for coin in self.db_object.bins[1].coins.values():
+            self.assertEqual(coin.value, 2.2)
+        for coin in self.db_object.bins[2].coins.values():
+            self.assertEqual(coin.value, 3.3)
 
 
 if __name__ == '__main__':
