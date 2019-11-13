@@ -103,7 +103,7 @@ class DitheringBinning:
             coin = Coin(value, weights[i])
             self.coin_list.append(coin)
 
-            if isinstance(value, (int, float)):
+            if isinstance(value, (int, float)) and not math.isnan(value):
                 self.total_weight += weights[i]  # Sum total weight of coins
                 if self.min_value is None or self.min_value > value:
                     self._min_value = value
