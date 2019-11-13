@@ -1,5 +1,3 @@
-
-
 class Bucket:
     """Bins to hold coin values.
 
@@ -15,8 +13,8 @@ class Bucket:
         self._coins = {}
 
     def __str__(self):
-        values = [v.value for (k, v) in self.coins.items()]
-        return "Bin: " + str(self.label) + " -- Weight: " + str(self.weight) + " -- Coins: " + str(values)
+        values = [coin.value for coin in self.coins.values()]
+        return f"Bin: {self.label} -- Weight {self.weight} -- Coins: {values}"
 
     def __len__(self):
         return len(self.coins)

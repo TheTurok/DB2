@@ -147,14 +147,14 @@ class DitheringBinning:
         Since every index is unique, we will use that as key for coins to store it in bins.
         """
 
-        split = int((1 + self.max_value - self.min_value) / self.bin_count)
+        split = (1 + self.max_value - self.min_value) / self.bin_count
 
         for index, coin in enumerate(self.coin_list):
             if not isinstance(coin.value, int):
                 self.label[index] = 'NaN'
                 continue
 
-            offset_value = int(coin.value - self.min_value)
+            offset_value = coin.value - self.min_value
             fit = self._send_bucket(offset_value, split)
 
             if fit >= self.bin_count:  # Edge Case: If fit hits the max value, put in last bucket
@@ -177,8 +177,8 @@ class DitheringBinning:
             weight
         """
 
-        split_weight = int(self.total_weight / self.bin_count)  # All bins weight is evenly split
-        average_weight = int(self.total_weight / len(self.coin_list))  # Bins average weight per coin
+        split_weight = self.total_weight / self.bin_count  # All bins weight is evenly split
+        average_weight = self.total_weight / len(self.coin_list)  # Bins average weight per coin
         threshold = split_weight + average_weight  # Threshold to move coin to other bucket
 
         # In-Order
@@ -252,8 +252,7 @@ if __name__ == "__main__":
     db = DitheringBinning()
     label = db.binning(x_, weights_, bin_labels, number_of_bins)
 
-    print()
-    print('Return of function')
+    print('\nReturn of function')
     print(label)
     print()
 
@@ -261,12 +260,11 @@ if __name__ == "__main__":
     for buck_ in db.bins:
         split_weight_ = int(db.total_weight / db.bin_count)
         percent_off = (buck_.weight - split_weight_) / db.total_weight
-        print(str(buck_.label) + " is " + "{0:.2%}".format(abs(percent_off)) + " off from perfect distribution:")
+        po_str = "{0:.2%}".format(abs(percent_off))
+        print(f"{buck_.label} is {po_str} off from perfect distribution.")
 
-    print()
-    print('Dithering Binning Object')
+    print('\nDithering Binning Object')
     print(db)
-    print()
 
     end_time = time.time()
-    print("Total time to run this program: " + str(end_time-start_time) + " seconds")
+    print("\nTotal time to run this program: " + str(end_time-start_time) + " seconds")
