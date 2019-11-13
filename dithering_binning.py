@@ -93,6 +93,7 @@ class DitheringBinning:
             values: the input values
             weights: the weight of each value
         """
+
         if len(values) != len(weights):
             raise ValueError('Values and weight must have same number of inputs')
 
@@ -130,6 +131,7 @@ class DitheringBinning:
 
     def _send_bucket(self, offset_value, split):
         """Receive offset_value with split and calculate which bucket it belongs too"""
+
         fit = 0
         while offset_value >= split:
             offset_value -= split
@@ -139,8 +141,8 @@ class DitheringBinning:
     def distribution_by_value(self):
         """Distribute coins into bins according to its value
 
-        We use the range of min and max to create a split number by value per bucket. The fit is made by calling _send_bin,
-        which will keep reducing the fit number by split to find the appropriate bucket it belongs into
+        We use the range of min and max to create a split number by value per bucket. The fit is made by calling
+        _send_bin, which will keep reducing the fit number by split to find the appropriate bucket it belongs into
 
         Since every index is unique, we will use that as key for coins to store it in bins.
         """
@@ -240,15 +242,15 @@ if __name__ == "__main__":
     start_time = time.time()
 
     # Change Values Here to see Results!
-    x = [-1, 0, 3, 4, 5, 6, 7, 8, float('nan'), 10, 1, 2, 3, 4, None, 6, 7, 8, 9, 10]
-    weights = [1, 1, 1, 1, 5, 5, 1, 1, 4, 4, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    x_ = [-1, 0, 3, 4, 5, 6, 7, 8, float('nan'), 10, 1, 2, 3, 4, None, 6, 7, 8, 9, 10]
+    weights_ = [1, 1, 1, 1, 5, 5, 1, 1, 4, 4, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     bin_labels = ['b1', 'b2', 'b3']
     number_of_bins = len(bin_labels)  # Probably don't want to touch this
 
     # Run Program and Print Values
     db = DitheringBinning()
-    label = db.binning(x, weights, bin_labels, number_of_bins)
+    label = db.binning(x_, weights_, bin_labels, number_of_bins)
 
     print()
     print('Return of function')
@@ -256,10 +258,10 @@ if __name__ == "__main__":
     print()
 
     # Accuracy Testing
-    for buck in db.bins:
-        split_weight = int(db.total_weight / db.bin_count)
-        percent_off = (buck.weight - split_weight) / db.total_weight
-        print(str(buck.label) + " is " + "{0:.2%}".format(abs(percent_off)) + " off from perfect distribution:")
+    for buck_ in db.bins:
+        split_weight_ = int(db.total_weight / db.bin_count)
+        percent_off = (buck_.weight - split_weight_) / db.total_weight
+        print(str(buck_.label) + " is " + "{0:.2%}".format(abs(percent_off)) + " off from perfect distribution:")
 
     print()
     print('Dithering Binning Object')
