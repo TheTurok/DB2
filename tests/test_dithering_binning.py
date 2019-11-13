@@ -123,12 +123,10 @@ class TestDitheringBinning(unittest.TestCase):
 
         for coin in self.db_object.bins[0].coins.values():
             self.assertNotEqual(10, coin.value)  # No values should be 10
-        for coin in self.db_object.bins[1].coins.vlaues():
-            if coin.value < 9:  # Values should only be 9 or 10
-                self.assertTrue(False)
+        for coin in self.db_object.bins[1].coins.values():
+            self.assertFalse(coin.value < 9)  # Values should only be 9 or 10
         for coin in self.db_object.bins[2].coins.values():
-            if coin.value != 10:  # Values can only be 10
-                self.assertTrue(False)
+            self.assertTrue(coin.value == 10)  # Values can only be 10
 
     def test_db_weight_inbalance(self):
         """Inbalance of weight on one side"""
