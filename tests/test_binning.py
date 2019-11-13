@@ -1,13 +1,13 @@
 import unittest
 from coin import Coin
-from bucket import Bin
+from bucket import Bucket
 
 
 class TestBin(unittest.TestCase):
     """Testing Bin Class and functions"""
 
     def setUp(self):
-        self.bin = Bin('test')
+        self.bin = Bucket('test')
         c1 = Coin(1, 1)
         c2 = Coin(2, 2)
         c3 = Coin(3, 3)
