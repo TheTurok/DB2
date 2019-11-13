@@ -49,7 +49,7 @@ class Bucket:
             raise ValueError('Coin with unique index already exists')
         if index < 0:
             raise ValueError('Invalid Index: Coin index cannot be below zero')
-        if isinstance(coin.value, int):
+        if isinstance(coin.value, (int, float)):
             self.weight += coin.weight
             self.coins[index] = coin
 

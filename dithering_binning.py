@@ -1,5 +1,6 @@
 import time
 import random
+import math
 
 from coin import Coin
 from bucket import Bucket
@@ -102,7 +103,7 @@ class DitheringBinning:
             coin = Coin(value, weights[i])
             self.coin_list.append(coin)
 
-            if isinstance(value, int):
+            if isinstance(value, (int, float)):
                 self.total_weight += weights[i]  # Sum total weight of coins
                 if self.min_value is None or self.min_value > value:
                     self._min_value = value
@@ -150,7 +151,7 @@ class DitheringBinning:
         split = (1 + self.max_value - self.min_value) / self.bin_count
 
         for index, coin in enumerate(self.coin_list):
-            if not isinstance(coin.value, int):
+            if not isinstance(coin.value, (int, float)) or math.isnan(coin.value):
                 self.label[index] = 'NaN'
                 continue
 
@@ -177,26 +178,26 @@ class DitheringBinning:
             weight
         """
 
-        split_weight = self.total_weight / self.bin_count  # All bins weight is evenly split
-        average_weight = self.total_weight / len(self.coin_list)  # Bins average weight per coin
+        split_weight = int(self.total_weight / self.bin_count)  # All bins weight is evenly split
+        average_weight = int(self.total_weight / len(self.coin_list))  # Bins average weight per coin
         threshold = split_weight + average_weight  # Threshold to move coin to other bucket
 
         # In-Order
-        for i in range(0, self.bin_count-1):  # Loop until 2nd to last item
+        for i in range(0, self.bin_count - 1):  # Loop until 2nd to last item
             buck = self.bins[i]  # Keep adding coins on next bucket
             while buck.weight >= threshold and buck.weight != 0:   # until it passes threshold
                 max_value = max([v.value for v in buck.coins.values()])  # Gat max value as going up the bin count
                 filtered_values = {k: coin for (k, coin) in buck.coins.items() if coin.value >= max_value}  # Edge #'s
                 coin_index = random.choice(list(filtered_values))  # Dithering Random weight of that value
-                self.bins[i+1].add_coin(buck.remove_coin(coin_index), coin_index)  # add removed coin
+                self.bins[i + 1].add_coin(buck.remove_coin(coin_index), coin_index)  # add removed coin
 
-        for i in range(self.bin_count-1, 0, -1):  # Reverse
+        for i in range(self.bin_count - 1, 0, -1):  # Reverse
             buck = self.bins[i]
             while buck.weight >= threshold and buck.weight != 0:
                 min_value = min([v.value for v in buck.coins.values()])  # Min values going down the bucket count
                 filtered_values = {k: coin for (k, coin) in buck.coins.items() if coin.value <= min_value}
                 coin_index = random.choice(list(filtered_values))
-                self.bins[i-1].add_coin(buck.remove_coin(coin_index), coin_index)
+                self.bins[i - 1].add_coin(buck.remove_coin(coin_index), coin_index)
 
     def labeling(self):
         """Labeling the coins in the bins
@@ -242,7 +243,7 @@ if __name__ == "__main__":
     start_time = time.time()
 
     # Change Values Here to see Results!
-    x_ = [-1, 0, 3, 4, 5, 6, 7, 8, float('nan'), 10, 1, 2, 3, 4, None, 6, 7, 8, 9, 10]
+    x_ = [-1.1, 0, 3, 4.4, 5, 6, 7, 8, float('nan'), 10.1, 1, 2, 3, 4, None, 6, 7, 8, 9, 10]
     weights_ = [1, 1, 1, 1, 5, 5, 1, 1, 4, 4, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     bin_labels = ['b1', 'b2', 'b3']
@@ -258,7 +259,7 @@ if __name__ == "__main__":
 
     # Accuracy Testing
     for buck_ in db.bins:
-        split_weight_ = int(db.total_weight / db.bin_count)
+        split_weight_ = db.total_weight / db.bin_count
         percent_off = (buck_.weight - split_weight_) / db.total_weight
         po_str = "{0:.2%}".format(abs(percent_off))
         print(f"{buck_.label} is {po_str} off from perfect distribution.")

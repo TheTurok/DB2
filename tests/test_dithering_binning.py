@@ -138,6 +138,8 @@ class TestDitheringBinning(unittest.TestCase):
             self.weights.append(3)
         self.db_object.binning(self.x, self.weights, self.labels, self.label_length)
 
+        print(self.db_object)
+
         for i in range(0, self.label_length):
             self.assertTrue(self.db_object.bins[i].weight == 6)
 
@@ -148,6 +150,16 @@ class TestDitheringBinning(unittest.TestCase):
         self.db_object.binning(self.x, self.weights, self.labels, self.label_length)
         for i in range(0, self.label_length):
             self.assertTrue(len(self.db_object.bins[i]) == 5)
+
+    '''def test_db_floats(self):
+        """" Test weight with zero but each have even amount of weight"""
+        self.x = [1.1, 1.1, 1.1, 1.1, 1.1, 2.2, 2.2, 2.2, 2.2, 2.2, 3.3, 3.3, 3.3, 3.3, 3.3]
+        self.weights = [0] * len(self.x)
+        self.db_object.binning(self.x, self.weights, self.labels, self.label_length)
+        for k, coin in self.db_object.bins[0].coins.items():
+            if coin.value != 1.1:
+                self.assertTrue(False)'''
+
 
 
 if __name__ == '__main__':
