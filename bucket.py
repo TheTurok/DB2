@@ -1,3 +1,5 @@
+import math
+
 class Bucket:
     """Bins to hold coin values.
 
@@ -49,7 +51,7 @@ class Bucket:
             raise ValueError('Coin with unique index already exists')
         if index < 0:
             raise ValueError('Invalid Index: Coin index cannot be below zero')
-        if isinstance(coin.value, (int, float)):
+        if isinstance(coin.value, (int, float)) and not math.isnan(coin.value):
             self.weight += coin.weight
             self.coins[index] = coin
 

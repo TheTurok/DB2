@@ -268,4 +268,4 @@ if __name__ == "__main__":
     print(db)
 
     end_time = time.time()
-    print("\nTotal time to run this program: " + str(end_time-start_time) + " seconds")
+    print(f"\nTotal time to run this program: {end_time-start_time} seconds")
