@@ -78,7 +78,7 @@ class TestDitheringBinning(unittest.TestCase):
         self.db_object.setup_bins(self.labels, self.label_length, len(self.x))
         self.db_object.distribution_by_value()
 
-    def test_dithering_balancd_values(self):
+    def test_dithering_balanced_values(self):
         """Normal values to test"""
         self.db_object.binning(self.x, self.weights, self.labels, self.label_length)
         self.assertEqual(0, self.db_object.bins[0].coins[0].value)
@@ -122,13 +122,13 @@ class TestDitheringBinning(unittest.TestCase):
         self.db_object.binning(self.x, self.weights, self.labels, self.label_length)
 
         for k, coin in self.db_object.bins[0].coins.items():
-            if coin.value == 10:
+            if coin.value == 10:  # No values should be 10
                 self.assertTrue(False)
         for k, coin in self.db_object.bins[1].coins.items():
-            if coin.value < 9:
+            if coin.value < 9:  # Values should only be 9 or 10
                 self.assertTrue(False)
         for k, coin in self.db_object.bins[2].coins.items():
-            if coin.value != 10:
+            if coin.value != 10:  # Values can only be 10
                 self.assertTrue(False)
 
     def test_db_weight_inbalance(self):
