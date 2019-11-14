@@ -26,7 +26,7 @@ class TestDitheringBinning(unittest.TestCase):
             self.assertEqual(i, self.db_object.coin_list[i].value)
 
     def test_setup_bins(self):
-        """Can't make empty bins and Normal bin creations"""
+        """Shuoldn't allow empty bins and should normally create labels"""
         self.assertRaises(ValueError, self.db_object.setup_bins, [], 0, 0)  # empty test
 
         self.db_object.setup_bins(self.labels, self.label_length, len(self.x))
