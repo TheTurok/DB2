@@ -10,6 +10,7 @@ class Bucket:
     """
 
     def __init__(self, label):
+        #commenting STUFF GIT PULL SHIT LMAO
         self._label = label
         self._weight = 0
         self._coins = {}
